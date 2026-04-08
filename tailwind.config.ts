@@ -49,6 +49,12 @@ const config: Config = {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)'
+      },
+      backgroundImage: {
+        'auth-login':
+          'radial-gradient(circle_at_20%_20%,hsl(var(--primary)/0.2),transparent_40%),radial-gradient(circle_at_80%_10%,hsl(var(--ring)/0.18),transparent_35%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--secondary)/0.35))',
+        'auth-signup':
+          'radial-gradient(circle_at_15%_15%,hsl(var(--primary)/0.24),transparent_42%),radial-gradient(circle_at_90%_5%,hsl(var(--accent-foreground)/0.1),transparent_32%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--secondary)/0.35))'
       }
     }
   },
