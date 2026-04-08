@@ -1,6 +1,9 @@
 'use client'
 
+import { useMutation } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 import Link from 'next/link'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { authCardBaseClass, authFieldErrorClass, authLinkClass } from '@/components/auth/styles'
@@ -15,24 +18,33 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { signupRequest } from '@/lib/api/auth'
 import { cn } from '@/lib/utils'
-
-type SignupFormValues = {
-  name: string
-  nickname: string
-  email: string
-  password: string
-}
+import type { ApiErrorResponse, SignupFormValues } from '@/types/auth'
 
 export function SignupFormCard() {
+  const [requestError, setRequestError] = useState<string | null>(null)
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting }
   } = useForm<SignupFormValues>()
 
-  const onSubmit = async () => {
-    // todo connect to API
+  const signupMutation = useMutation({
+    mutationFn: signupRequest,
+    onError: (error: AxiosError<ApiErrorResponse>) => {
+      const message = error.response?.data?.message
+      setRequestError(Array.isArray(message) ? message.join(', ') : (message ?? 'Signup failed'))
+    },
+    onSuccess: () => {
+      setRequestError(null)
+    }
+  })
+
+  const onSubmit = async (data: SignupFormValues) => {
+    setRequestError(null)
+    await signupMutation.mutateAsync(data)
   }
 
   return (
@@ -141,6 +153,11 @@ export function SignupFormCard() {
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             Create account
           </Button>
+
+          {requestError && <p className={authFieldErrorClass}>{requestError}</p>}
+          {signupMutation.isSuccess && !requestError && (
+            <p className="text-sm font-medium text-green-600">Registration successful.</p>
+          )}
         </form>
       </CardContent>
 
