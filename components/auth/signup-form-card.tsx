@@ -1,5 +1,9 @@
-import Link from 'next/link'
+'use client'
 
+import Link from 'next/link'
+import { useForm } from 'react-hook-form'
+
+import { authCardBaseClass, authFieldErrorClass, authLinkClass } from '@/components/auth/styles'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -11,9 +15,26 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { authCardBaseClass, authLinkClass } from '@/components/auth/styles'
+import { cn } from '@/lib/utils'
+
+type SignupFormValues = {
+  name: string
+  nickname: string
+  email: string
+  password: string
+}
 
 export function SignupFormCard() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm<SignupFormValues>()
+
+  const onSubmit = async () => {
+    // todo connect to API
+  }
+
   return (
     <Card className={`${authCardBaseClass} max-w-lg`}>
       <CardHeader>
@@ -24,34 +45,52 @@ export function SignupFormCard() {
       </CardHeader>
 
       <CardContent>
-        <form className="space-y-5" action="#" method="post">
+        <form className="space-y-5" onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
-                name="name"
                 type="text"
-                required
-                minLength={1}
                 placeholder="Your name"
                 autoComplete="name"
+                aria-invalid={Boolean(errors.name)}
+                className={cn(errors.name && 'border-destructive focus-visible:ring-destructive')}
+                {...register('name', {
+                  required: 'Name is required',
+                  minLength: {
+                    value: 1,
+                    message: 'Name is required'
+                  }
+                })}
               />
+              {errors.name && <p className={authFieldErrorClass}>{errors.name.message}</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="nickname">Nickname</Label>
               <Input
                 id="nickname"
-                name="nickname"
                 type="text"
-                required
-                minLength={3}
-                pattern="^[a-zA-Z0-9_]+$"
-                title="Nickname can only contain letters, numbers, and underscores"
-                placeholder="for example: pasha_01"
+                placeholder="for example: tom_01"
                 autoComplete="username"
+                aria-invalid={Boolean(errors.nickname)}
+                className={cn(
+                  errors.nickname && 'border-destructive focus-visible:ring-destructive'
+                )}
+                {...register('nickname', {
+                  required: 'Nickname is required',
+                  minLength: {
+                    value: 3,
+                    message: 'Nickname must be at least 3 characters'
+                  },
+                  pattern: {
+                    value: /^[a-zA-Z0-9_]+$/,
+                    message: 'Nickname can only contain letters, numbers, and underscores'
+                  }
+                })}
               />
+              {errors.nickname && <p className={authFieldErrorClass}>{errors.nickname.message}</p>}
             </div>
           </div>
 
@@ -59,30 +98,47 @@ export function SignupFormCard() {
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
-              name="email"
               type="email"
-              required
               placeholder="you@email.com"
               autoComplete="email"
+              aria-invalid={Boolean(errors.email)}
+              className={cn(errors.email && 'border-destructive focus-visible:ring-destructive')}
+              {...register('email', {
+                required: 'Email is required',
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: 'Enter a valid email address'
+                }
+              })}
             />
+            {errors.email && <p className={authFieldErrorClass}>{errors.email.message}</p>}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
-              name="password"
               type="password"
-              required
-              minLength={8}
-              pattern="(?=.*[A-Z])(?=.*[0-9]).{8,}"
-              title="Password must contain at least one uppercase letter and one number"
               placeholder="At least 8 characters"
               autoComplete="new-password"
+              aria-invalid={Boolean(errors.password)}
+              className={cn(errors.password && 'border-destructive focus-visible:ring-destructive')}
+              {...register('password', {
+                required: 'Password is required',
+                minLength: {
+                  value: 8,
+                  message: 'Password must be at least 8 characters'
+                },
+                pattern: {
+                  value: /(?=.*[A-Z])(?=.*[0-9])/,
+                  message: 'Password must contain at least one uppercase letter and one number'
+                }
+              })}
             />
+            {errors.password && <p className={authFieldErrorClass}>{errors.password.message}</p>}
           </div>
 
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
             Create account
           </Button>
         </form>
