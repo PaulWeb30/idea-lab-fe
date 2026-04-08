@@ -4,7 +4,8 @@ const envSchema = z.object({
   NEXT_PUBLIC_API_URL: z
     .string()
     .url('NEXT_PUBLIC_API_URL must be a valid URL')
-    .transform((value) => value.replace(/\/+$/, ''))
+    .optional()
+    .transform((value) => (value ?? 'http://localhost:3000').replace(/\/+$/, ''))
 })
 
 const parsedEnv = envSchema.safeParse({
