@@ -21,6 +21,11 @@ type UpdateProfileValues = {
   name: string
 }
 
+function normalizeProfileValue(value: string | null | undefined) {
+  const normalized = (value ?? '').trim()
+  return normalized.length > 0 ? normalized : null
+}
+
 function getErrorMessage(error: unknown, fallback: string) {
   if (!error || typeof error !== 'object' || !('response' in error)) {
     return fallback
@@ -98,9 +103,18 @@ export function ProfileEditForm({
     setRequestError(null)
     setSuccessMessage(null)
 
+    const nextNickname = normalizeProfileValue(values.nickname)
+    const nextName = normalizeProfileValue(values.name)
+    const currentNickname = normalizeProfileValue(profile.nickname)
+    const currentName = normalizeProfileValue(profile.name)
+
+    if (nextNickname === currentNickname && nextName === currentName) {
+      return
+    }
+
     const payload = {
-      nickname: values.nickname.trim() || undefined,
-      name: values.name.trim() || undefined
+      nickname: nextNickname ?? undefined,
+      name: nextName ?? undefined
     }
 
     await updateMutation.mutateAsync(payload)
@@ -175,19 +189,6 @@ export function ProfileEditForm({
                   Save changes
                 </>
               )}
-            </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() =>
-                reset({
-                  nickname: profile.nickname,
-                  name: profile.name ?? ''
-                })
-              }
-            >
-              Reset
             </Button>
           </div>
 
