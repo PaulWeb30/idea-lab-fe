@@ -1,22 +1,29 @@
+import { Suspense } from 'react'
+
 import { ProfileModule } from '@/components/profile/profile-module'
 
 type PublicIdeasPageProps = {
-  params: {
+  params: Promise<{
     userId: string
-  }
-  searchParams?: {
+  }>
+  searchParams?: Promise<{
     page?: string
     pageSize?: string
-  }
+  }>
 }
 
-export default function PublicIdeasPage({ params, searchParams }: PublicIdeasPageProps) {
+export default async function PublicIdeasPage({ params, searchParams }: PublicIdeasPageProps) {
+  const resolvedParams = await params
+  const resolvedSearchParams = await searchParams
+
   return (
-    <ProfileModule
-      mode="public-ideas"
-      userId={params.userId}
-      initialPage={Number(searchParams?.page ?? 1)}
-      initialPageSize={Number(searchParams?.pageSize ?? 20)}
-    />
+    <Suspense fallback={null}>
+      <ProfileModule
+        mode="public-ideas"
+        userId={resolvedParams.userId}
+        initialPage={Number(resolvedSearchParams?.page ?? 1)}
+        initialPageSize={Number(resolvedSearchParams?.pageSize ?? 20)}
+      />
+    </Suspense>
   )
 }
