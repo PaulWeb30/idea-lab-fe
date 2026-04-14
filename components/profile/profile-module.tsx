@@ -146,7 +146,7 @@ export function ProfileModule({
     }
 
     if (mode === 'me-ideas') {
-      return 'My ideas'
+      return 'My profile'
     }
 
     if (mode === 'public-ideas') {
@@ -166,7 +166,7 @@ export function ProfileModule({
     }
 
     if (mode === 'me-ideas') {
-      return 'Review your latest submissions, votes, and visibility settings.'
+      return 'Your profile with your ideas, votes, and visibility settings.'
     }
 
     if (mode === 'public-ideas') {
@@ -262,12 +262,6 @@ export function ProfileModule({
           <Link href="/profile/edit">
             <PencilLine className="h-4 w-4" />
             Edit profile
-          </Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link href="/profile">
-            <UserRound className="h-4 w-4" />
-            Overview
           </Link>
         </Button>
         <Button

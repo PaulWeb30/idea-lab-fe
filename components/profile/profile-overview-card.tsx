@@ -15,6 +15,9 @@ export function ProfileOverviewCard({
   isPublicMode: boolean
   privateProfile?: MeProfile
 }) {
+  const ideasCount = currentProfile.stats?.ideasCount ?? 0
+  const totalVotes = currentProfile.stats?.totalVotes ?? 0
+
   return (
     <Card className="border-border/70 bg-card/95 shadow-sm">
       <CardContent className="space-y-6 p-6 sm:p-8">
@@ -46,12 +49,8 @@ export function ProfileOverviewCard({
         </div>
 
         <div className="grid gap-3 sm:grid-cols-3">
-          <ProfileStatCard icon={Lightbulb} label="Ideas" value={currentProfile.stats.ideasCount} />
-          <ProfileStatCard
-            icon={Vote}
-            label="Total votes"
-            value={currentProfile.stats.totalVotes}
-          />
+          <ProfileStatCard icon={Lightbulb} label="Ideas" value={ideasCount} />
+          <ProfileStatCard icon={Vote} label="Total votes" value={totalVotes} />
           <ProfileStatCard
             icon={CalendarDays}
             label="Member since"
