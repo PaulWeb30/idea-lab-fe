@@ -8,3 +8,13 @@ export const axiosClient = axios.create({
     'Content-Type': 'application/json'
   }
 })
+
+if (typeof window !== 'undefined') {
+  axiosClient.interceptors.request.use((config) => {
+    const token = localStorage.getItem('accessToken')
+    if (token && config.headers && typeof config.headers !== 'string') {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  })
+}

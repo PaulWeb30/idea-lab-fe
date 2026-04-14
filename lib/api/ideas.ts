@@ -15,3 +15,13 @@ export async function getIdeaById(id: string) {
   const { data } = await axiosClient.get<IdeaWithUser>(`/ideas/${id}`)
   return data
 }
+
+export async function addIdeaView(id: string) {
+  const { data } = await axiosClient.post<{ viewsCount: number }>(`/ideas/${id}/view`)
+  return data
+}
+
+export async function voteIdea(id: string) {
+  const { data } = await axiosClient.post<{ votesCount: number }>(`/ideas/${id}/vote`)
+  return data
+}
