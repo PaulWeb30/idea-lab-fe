@@ -7,13 +7,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { cn } from '@/lib/utils'
 import type { PaginatedIdeas } from '@/types/profile'
 
-import { buildIdeasUrl } from './profile-utils'
+import { buildIdeasUrlWithCurrentSearch } from './profile-utils'
 
 export function IdeasList({
   data,
   page,
   pageSize,
   pathname,
+  currentSearch,
   onPageSizeChange,
   isLoading
 }: {
@@ -21,6 +22,7 @@ export function IdeasList({
   page: number
   pageSize: number
   pathname: string
+  currentSearch: string
   onPageSizeChange: (nextPageSize: number) => void
   isLoading: boolean
 }) {
@@ -40,6 +42,8 @@ export function IdeasList({
   if (!data) {
     return null
   }
+
+  const totalPages = Math.max(data.totalPages, 1)
 
   return (
     <Card className="border-border/70 bg-card/95 shadow-sm">
@@ -89,7 +93,7 @@ export function IdeasList({
 
         <div className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-secondary/30 p-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted-foreground">
-            Page {page} of {Math.max(data.totalPages, 1)}
+            Page {page} of {totalPages}
           </p>
 
           <div className="flex flex-wrap gap-2">
@@ -100,17 +104,33 @@ export function IdeasList({
               disabled={page <= 1}
               className={cn(page <= 1 && 'pointer-events-none opacity-50')}
             >
-              <Link href={buildIdeasUrl(pathname, Math.max(page - 1, 1), pageSize)}>Previous</Link>
+              <Link
+                href={buildIdeasUrlWithCurrentSearch(
+                  pathname,
+                  currentSearch,
+                  Math.max(page - 1, 1),
+                  pageSize
+                )}
+              >
+                Previous
+              </Link>
             </Button>
 
             <Button
               asChild
               variant="outline"
               size="sm"
-              disabled={page >= data.totalPages}
-              className={cn(page >= data.totalPages && 'pointer-events-none opacity-50')}
+              disabled={page >= totalPages}
+              className={cn(page >= totalPages && 'pointer-events-none opacity-50')}
             >
-              <Link href={buildIdeasUrl(pathname, Math.min(page + 1, data.totalPages), pageSize)}>
+              <Link
+                href={buildIdeasUrlWithCurrentSearch(
+                  pathname,
+                  currentSearch,
+                  Math.min(page + 1, totalPages),
+                  pageSize
+                )}
+              >
                 Next
               </Link>
             </Button>

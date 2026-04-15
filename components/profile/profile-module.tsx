@@ -14,7 +14,6 @@ import { ProfileShell } from '@/components/profile/profile-shell'
 import { ErrorState, LoadingState } from '@/components/profile/profile-states'
 import { Button } from '@/components/ui/button'
 import {
-  clearStoredAccessToken,
   fetchMeIdeas,
   fetchMeProfile,
   fetchPublicIdeas,
@@ -123,7 +122,6 @@ export function ProfileModule({
   const logoutMutation = useMutation({
     mutationFn: logoutFromBackend,
     onSuccess: () => {
-      clearStoredAccessToken()
       queryClient.removeQueries({ queryKey: ['profile'] })
       router.push('/login')
     }
@@ -354,6 +352,7 @@ export function ProfileModule({
             page={page}
             pageSize={pageSize}
             pathname={pathname}
+            currentSearch={searchParams.toString()}
             onPageSizeChange={(nextPageSize) => updateSearchParams(1, nextPageSize)}
             isLoading={ideasQuery.isPending}
           />

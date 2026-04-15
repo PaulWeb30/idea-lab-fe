@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label'
 import { profileQueryKeys, updateMeProfile } from '@/lib/api/profile'
 import { cn } from '@/lib/utils'
 import type { ApiErrorResponse } from '@/types/auth'
+import type { UpdateProfilePayload } from '@/types/api/profile'
 import type { MeProfile } from '@/types/profile'
 
 type UpdateProfileValues = {
@@ -109,12 +110,23 @@ export function ProfileEditForm({
     const currentName = normalizeProfileValue(profile.name)
 
     if (nextNickname === currentNickname && nextName === currentName) {
+      setSuccessMessage('No changes to save.')
       return
     }
 
-    const payload = {
-      nickname: nextNickname ?? undefined,
-      name: nextName ?? undefined
+    const payload: UpdateProfilePayload = {}
+
+    if (nextNickname !== currentNickname && nextNickname !== null) {
+      payload.nickname = nextNickname
+    }
+
+    if (nextName !== currentName && nextName !== null) {
+      payload.name = nextName
+    }
+
+    if (Object.keys(payload).length === 0) {
+      setSuccessMessage('No changes to save.')
+      return
     }
 
     await updateMutation.mutateAsync(payload)

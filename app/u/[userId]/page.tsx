@@ -12,17 +12,29 @@ type PublicProfilePageProps = {
   }>
 }
 
+function parsePositiveInt(value: string | undefined, fallback: number) {
+  const parsed = Number.parseInt(value ?? '', 10)
+
+  if (!Number.isFinite(parsed) || parsed < 1) {
+    return fallback
+  }
+
+  return parsed
+}
+
 export default async function PublicProfilePage({ params, searchParams }: PublicProfilePageProps) {
   const resolvedParams = await params
   const resolvedSearchParams = await searchParams
+  const initialPage = parsePositiveInt(resolvedSearchParams?.page, 1)
+  const initialPageSize = parsePositiveInt(resolvedSearchParams?.pageSize, 20)
 
   return (
     <Suspense fallback={null}>
       <ProfileModule
         mode="public"
         userId={resolvedParams.userId}
-        initialPage={Number(resolvedSearchParams?.page ?? 1)}
-        initialPageSize={Number(resolvedSearchParams?.pageSize ?? 20)}
+        initialPage={initialPage}
+        initialPageSize={initialPageSize}
       />
     </Suspense>
   )
