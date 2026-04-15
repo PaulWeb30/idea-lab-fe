@@ -1,19 +1,9 @@
 import { Sparkles } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { formatDate, formatDateTime } from '@/lib/profile/utils/date'
+import { resolveCategory } from '@/lib/profile/utils/idea'
 import type { Idea } from '@/types/profile'
-
-import { formatDate, formatDateTime } from './profile-utils'
-
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-
-function resolveCategory(idea: Idea): string {
-  const candidates = [idea.categoryName?.trim(), idea.category?.name?.trim()]
-  for (const c of candidates) {
-    if (c && !UUID_REGEX.test(c)) return c
-  }
-  return 'Uncategorized'
-}
 
 export function IdeaCard({ idea }: { idea: Idea }) {
   const categoryLabel = resolveCategory(idea)

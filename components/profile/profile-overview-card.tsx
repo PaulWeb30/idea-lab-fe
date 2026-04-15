@@ -2,9 +2,9 @@ import { CalendarDays, Lightbulb, Vote } from 'lucide-react'
 
 import { ProfileMetaRow, ProfileStatCard } from '@/components/profile/profile-primitives'
 import { Card, CardContent } from '@/components/ui/card'
+import { formatDate } from '@/lib/profile/utils/date'
+import { getInitials } from '@/lib/profile/utils/profile'
 import type { MeProfile, PublicProfile } from '@/types/profile'
-
-import { formatDate, getInitials } from './profile-utils'
 
 export function ProfileOverviewCard({
   currentProfile,

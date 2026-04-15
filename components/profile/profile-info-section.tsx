@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { PROFILE_PLAN_LABELS } from '@/constants/profile/plans'
 import type { MeProfile } from '@/types/profile'
 
 interface ProfileInfoField {
@@ -26,11 +27,6 @@ export function ProfileInfoSection({
   profile: MeProfile
   onUpgradeClick?: () => void
 }) {
-  const planLabels: Record<string, string> = {
-    free: 'Free',
-    pro: 'Pro'
-  }
-
   return (
     <div className="space-y-6">
       {/* Row 1: Email and Nickname */}
@@ -48,7 +44,7 @@ export function ProfileInfoSection({
 
       {/* Row 3: Plan with Upgrade Button */}
       <div className="flex items-end justify-between gap-6">
-        <InfoField label="Plan" value={planLabels[profile.plan]} />
+        <InfoField label="Plan" value={PROFILE_PLAN_LABELS[profile.plan]} />
         <Button variant="outline" size="sm" onClick={onUpgradeClick} className="mb-1">
           Upgrade
         </Button>

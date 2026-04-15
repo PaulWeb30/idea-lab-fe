@@ -4,10 +4,10 @@ import { Lightbulb } from 'lucide-react'
 import { IdeaCard } from '@/components/profile/idea-card'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { PROFILE_PAGE_SIZE_OPTIONS } from '@/constants/profile/pagination'
+import { buildIdeasUrlWithCurrentSearch } from '@/lib/profile/utils/url'
 import { cn } from '@/lib/utils'
 import type { PaginatedIdeas } from '@/types/profile'
-
-import { buildIdeasUrlWithCurrentSearch } from './profile-utils'
 
 export function IdeasList({
   data,
@@ -65,7 +65,7 @@ export function IdeasList({
             onChange={(event) => onPageSizeChange(Number(event.target.value))}
             className="h-10 min-w-[128px] rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm outline-none ring-offset-background transition focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
-            {[10, 20, 50, 100].map((size) => (
+            {PROFILE_PAGE_SIZE_OPTIONS.map((size) => (
               <option key={size} value={size}>
                 {size} per page
               </option>

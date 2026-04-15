@@ -12,34 +12,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { profileQueryKeys, updateMeProfile } from '@/lib/api/profile'
+import { getErrorMessage } from '@/lib/profile/utils/error'
+import { buildProfileUpdatePayload, normalizeProfileValue } from '@/lib/profile/utils/profile'
 import { cn } from '@/lib/utils'
 import type { ApiErrorResponse } from '@/types/auth'
-import type { UpdateProfilePayload } from '@/types/api/profile'
 import type { MeProfile } from '@/types/profile'
 
 type UpdateProfileValues = {
   nickname: string
   name: string
-}
-
-function normalizeProfileValue(value: string | null | undefined) {
-  const normalized = (value ?? '').trim()
-  return normalized.length > 0 ? normalized : null
-}
-
-function getErrorMessage(error: unknown, fallback: string) {
-  if (!error || typeof error !== 'object' || !('response' in error)) {
-    return fallback
-  }
-
-  const axiosError = error as AxiosError<ApiErrorResponse>
-  const message = axiosError.response?.data?.message
-
-  if (Array.isArray(message)) {
-    return message.join(', ')
-  }
-
-  return message ?? fallback
 }
 
 export function ProfileEditForm({
@@ -114,15 +95,12 @@ export function ProfileEditForm({
       return
     }
 
-    const payload: UpdateProfilePayload = {}
-
-    if (nextNickname !== currentNickname && nextNickname !== null) {
-      payload.nickname = nextNickname
-    }
-
-    if (nextName !== currentName && nextName !== null) {
-      payload.name = nextName
-    }
+    const payload = buildProfileUpdatePayload({
+      nextNickname,
+      nextName,
+      currentNickname,
+      currentName
+    })
 
     if (Object.keys(payload).length === 0) {
       setSuccessMessage('No changes to save.')

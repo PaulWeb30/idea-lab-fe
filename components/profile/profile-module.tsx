@@ -1,7 +1,6 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { AxiosError } from 'axios'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
@@ -14,6 +13,14 @@ import { ProfileShell } from '@/components/profile/profile-shell'
 import { ErrorState, LoadingState } from '@/components/profile/profile-states'
 import { Button } from '@/components/ui/button'
 import {
+  DEFAULT_PAGE,
+  DEFAULT_PAGE_SIZE,
+  MAX_PAGE,
+  MAX_PAGE_SIZE,
+  MIN_PAGE,
+  MIN_PAGE_SIZE
+} from '@/constants/profile/pagination'
+import {
   fetchMeIdeas,
   fetchMeProfile,
   fetchPublicIdeas,
@@ -21,7 +28,8 @@ import {
   logoutFromBackend,
   profileQueryKeys
 } from '@/lib/api/profile'
-import type { ApiErrorResponse } from '@/types/auth'
+import { getErrorMessage, getErrorStatus } from '@/lib/profile/utils/error'
+import { clamp, parsePositiveInteger } from '@/lib/profile/utils/number'
 import type { MeProfile, PublicProfile } from '@/types/profile'
 
 type ProfileMode = 'me' | 'edit' | 'me-ideas' | 'public' | 'public-ideas'
@@ -33,49 +41,11 @@ type ProfileModuleProps = {
   initialPageSize?: number
 }
 
-function parsePositiveInteger(value: string | null | undefined, fallback: number) {
-  const parsed = Number.parseInt(value ?? '', 10)
-
-  if (!Number.isFinite(parsed) || Number.isNaN(parsed) || parsed < 1) {
-    return fallback
-  }
-
-  return parsed
-}
-
-function clamp(value: number, minimum: number, maximum: number) {
-  return Math.min(Math.max(value, minimum), maximum)
-}
-
-function getErrorMessage(error: unknown, fallback: string) {
-  if (!error || typeof error !== 'object' || !('response' in error)) {
-    return fallback
-  }
-
-  const axiosError = error as AxiosError<ApiErrorResponse>
-  const message = axiosError.response?.data?.message
-
-  if (Array.isArray(message)) {
-    return message.join(', ')
-  }
-
-  return message ?? fallback
-}
-
-function getErrorStatus(error: unknown) {
-  if (!error || typeof error !== 'object' || !('response' in error)) {
-    return undefined
-  }
-
-  const axiosError = error as AxiosError<ApiErrorResponse>
-  return axiosError.response?.status
-}
-
 export function ProfileModule({
   mode,
   userId,
-  initialPage = 1,
-  initialPageSize = 20
+  initialPage = DEFAULT_PAGE,
+  initialPageSize = DEFAULT_PAGE_SIZE
 }: ProfileModuleProps) {
   const queryClient = useQueryClient()
   const router = useRouter()
@@ -84,11 +54,15 @@ export function ProfileModule({
 
   const isPublicMode = mode === 'public' || mode === 'public-ideas'
   const needsIdeas = mode === 'me-ideas' || mode === 'public-ideas'
-  const page = clamp(parsePositiveInteger(searchParams.get('page'), initialPage), 1, 100000)
+  const page = clamp(
+    parsePositiveInteger(searchParams.get('page'), initialPage),
+    MIN_PAGE,
+    MAX_PAGE
+  )
   const pageSize = clamp(
     parsePositiveInteger(searchParams.get('pageSize'), initialPageSize),
-    1,
-    100
+    MIN_PAGE_SIZE,
+    MAX_PAGE_SIZE
   )
 
   const profileQuery = useQuery({
