@@ -167,10 +167,8 @@ export function ProfileEditForm({
               aria-invalid={Boolean(errors.name)}
               className={cn(errors.name && 'border-destructive focus-visible:ring-destructive')}
               {...register('name', {
-                minLength: {
-                  value: 1,
-                  message: 'Name must be at least 1 character'
-                }
+                validate: (value) =>
+                  value === '' || value.length >= 1 || 'Name must be at least 1 character'
               })}
             />
             {errors.name ? <p className={authFieldErrorClass}>{errors.name.message}</p> : null}
