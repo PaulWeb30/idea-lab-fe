@@ -19,7 +19,10 @@ export function IdeasGrid() {
     () =>
       Array.from(
         new Set(
-          data?.items?.map((idea) => idea.userId).filter(Boolean) ?? [],
+          data?.items
+            ?.filter((idea) => !idea.user && !idea.author)
+            .map((idea) => idea.userId)
+            .filter(Boolean) ?? [],
         ),
       ),
     [data?.items],
@@ -84,7 +87,7 @@ export function IdeasGrid() {
       <div className="text-center py-12">
         <h3 className="text-lg font-semibold mb-2">No ideas yet</h3>
         <p className="text-muted-foreground mb-6">Be the first to share your idea!</p>
-        <Link href="/ideas/create">
+        <Link href="/ideas">
           <Button>Create Your First Idea</Button>
         </Link>
       </div>

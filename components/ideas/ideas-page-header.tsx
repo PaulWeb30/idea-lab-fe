@@ -8,7 +8,7 @@ export function IdeasPageHeader() {
     <div className="mb-8">
       <div className="flex items-center justify-between mb-2">
         <h1 className="text-4xl font-bold tracking-tight">Ideas</h1>
-        <Link href="/ideas/create">
+        <Link href="/ideas">
           <Button>Create Idea</Button>
         </Link>
       </div>

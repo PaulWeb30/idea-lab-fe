@@ -46,10 +46,15 @@ export function IdeaCard({ idea, authorName, categoryName }: IdeaCardProps) {
   })
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    const checkAuth = () => {
       const token = localStorage.getItem('accessToken')
       setIsAuthorized(Boolean(token))
     }
+
+    checkAuth()
+
+    window.addEventListener('storage', checkAuth)
+    return () => window.removeEventListener('storage', checkAuth)
   }, [])
 
   useEffect(() => {
@@ -103,11 +108,9 @@ export function IdeaCard({ idea, authorName, categoryName }: IdeaCardProps) {
             </span>
           )}
         </div>
-        <Link href={`/ideas/${idea.id}`}>
-          <CardTitle className="line-clamp-2 hover:text-primary cursor-pointer transition-colors">
-            {idea.title}
-          </CardTitle>
-        </Link>
+        <CardTitle className="line-clamp-2">
+          {idea.title}
+        </CardTitle>
         <CardDescription className="text-xs text-muted-foreground">
           by {finalAuthorName}
           {resolvedCategoryName ? ` • ${resolvedCategoryName}` : ''}
@@ -130,7 +133,7 @@ export function IdeaCard({ idea, authorName, categoryName }: IdeaCardProps) {
           </Button>
         </div>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
-          <span>👍 {idea.votesCount} votes</span>
+          <span>👍 {localVotesCount} votes</span>
           <span>👁️ {localViewsCount} views</span>
         </div>
       </CardContent>
